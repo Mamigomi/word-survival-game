@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Word Monster Battle</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <div id="startOverlay" class="start-overlay" hidden>
+    <div class="start-card">
+      <p class="start-kicker">다시 오신 것을 환영합니다</p>
+      <h2>던전 선택</h2>
+      <p id="startMessage" class="start-message">지난번 오답을 확인하는 중입니다.</p>
+      <div class="mode-selector">
+        <p class="mode-label">모드 선택</p>
+        <div class="mode-buttons">
+          <button type="button" class="mode-button selected" data-mode="기초 모드">기초 모드</button>
+          <button type="button" class="mode-button" data-mode="실전 모드">실전 모드</button>
+          <button type="button" class="mode-button" data-mode="혼합 모드">혼합 모드</button>
+        </div>
+      </div>
+      <div id="dungeonButtons" class="dungeon-buttons"></div>
+    </div>
+  </div>
+  <div id="levelClearOverlay" class="level-clear-overlay" hidden>
+    <div id="levelClearCard" class="level-clear-card">
+      <div id="levelClearEmoji" class="level-clear-emoji">🎉</div>
+      <h2 id="levelClearTitle">Congratulations!</h2>
+      <p id="levelClearSubtitle">Level Clear!</p>
+      <p id="expGainText" class="exp-gain">+120 EXP</p>
+      <p id="nextLevelText" class="next-level-text">Vocabulary Hunter Unlocked</p>
+    </div>
+  </div>
+  <div id="bossWarningOverlay" class="boss-warning-overlay" hidden>
+    <div class="boss-warning-card">
+      <p class="boss-warning-kicker">⚠ WARNING ⚠</p>
+      <h2>BOSS APPROACHING</h2>
+      <p class="boss-warning-name">🐉 Vocabulary Dragon</p>
+    </div>
+  </div>
+  <main class="app">
+    <section class="hud">
+      <div class="panel">
+        <h1 id="mainTitle">Word Monster Battle</h1>
+        <p id="currentModeText" class="current-mode">현재 모드: 기초 모드</p>
+        <p id="currentDungeonText" class="current-dungeon">현재 던전: 선택 대기 중</p>
+        <p id="statusText">단어 데이터를 불러오는 중...</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card compact">
+          <span class="label">제한시간</span>
+          <strong id="timerText">5.0초</strong>
+          <div class="bar"><div id="timerBar" class="fill timer"></div></div>
+        </div>
+        <div class="stat-card">
+          <span class="label">플레이어 HP</span>
+          <strong id="playerHpText">0 / 0</strong>
+          <div class="bar"><div id="playerHpBar" class="fill player"></div></div>
+        </div>
+        <div class="stat-card">
+          <span class="label">몬스터 HP</span>
+          <strong id="monsterHpText">0 / 0</strong>
+          <div class="bar"><div id="monsterHpBar" class="fill monster"></div></div>
+        </div>
+        <div class="stat-card compact">
+          <span class="label">현재 점수</span>
+          <strong id="scoreText">0</strong>
+        </div>
+        <div class="stat-card compact">
+          <span class="label">처치한 몬스터</span>
+          <strong id="defeatedCount">0</strong>
+        </div>
+        <div class="stat-card compact">
+          <span class="label">현재 콤보</span>
+          <strong id="comboText">0</strong>
+        </div>
+        <div class="stat-card compact">
+          <span class="label">정답</span>
+          <strong id="correctCount">0</strong>
+        </div>
+        <div class="stat-card compact">
+          <span class="label">오답</span>
+          <strong id="wrongCount">0</strong>
+        </div>
+        <div class="stat-card compact">
+          <span class="label">남은 문제</span>
+          <strong id="remainingCount">0</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="battlefield">
+      <div class="monster-area">
+        <div class="monster-header">
+          <div>
+            <p class="monster-caption">현재 전투</p>
+            <h2 id="monsterTitle">🐲 Word Monster</h2>
+          </div>
+          <div class="monster-meta">
+            <span id="monsterLevelBadge" class="badge">Lv.1</span>
+            <span id="comboBadge" class="badge muted">No Combo</span>
+          </div>
+        </div>
+        <div id="battleEffect" class="battle-effect">READY</div>
+        <div id="monsterSprite" class="monster">🐲</div>
+      </div>
+
+      <div class="quiz-card">
+        <div class="quiz-meta">
+          <span id="questionBadge" class="badge">READY</span>
+          <span id="difficultyBadge" class="badge muted">-</span>
+        </div>
+        <h2 id="headwordText" class="headword">로딩 중...</h2>
+        <p id="posText" class="subtext"></p>
+        <div id="answers" class="answers"></div>
+      </div>
+    </section>
+
+    <section id="resultPanel" class="result-panel" hidden>
+      <h2 id="resultTitle">게임 종료</h2>
+      <div class="result-grid">
+        <div><span>정답 수</span><strong id="finalCorrect">0</strong></div>
+        <div><span>오답 수</span><strong id="finalWrong">0</strong></div>
+        <div><span>정확도</span><strong id="finalAccuracy">0%</strong></div>
+        <div><span>등급</span><strong id="finalGrade">F</strong></div>
+        <div><span>최종 점수</span><strong id="finalScore">0</strong></div>
+        <div><span>처치 수</span><strong id="finalDefeated">0</strong></div>
+        <div><span>최대 콤보</span><strong id="finalMaxCombo">0</strong></div>
+        <div><span>도달 레벨</span><strong id="finalLevel">1</strong></div>
+        <div><span>플레이한 던전</span><strong id="finalDungeon">-</strong></div>
+      </div>
+      <p id="resultMessage" class="result-message"></p>
+      <button id="restartButton" class="restart-button">던전 선택으로 돌아가기</button>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
